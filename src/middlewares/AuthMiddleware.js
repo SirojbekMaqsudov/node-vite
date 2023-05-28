@@ -8,11 +8,13 @@ module.exports = (req, res, next) => {
             return ErrorResponse.Unauthorized()
         }
 
-        const verify = jwt.verify(token)
-        req.user = verify
+        const user = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+
+        req.user = user
 
         next()
     }catch (e) {
+        console.log(e + '')
         return res.json(ErrorResponse.Unauthorized())
     }
 }

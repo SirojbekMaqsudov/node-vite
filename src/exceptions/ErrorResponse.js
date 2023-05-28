@@ -1,7 +1,7 @@
 class ErrorResponse extends Error {
     constructor(message, status) {
         super(message);
-        this.message = message
+        this.error = message
         this.status = status
     }
 
@@ -19,6 +19,10 @@ class ErrorResponse extends Error {
 
     static Validation(message = 'Validation Error!') {
         return new ErrorResponse(message, 400)
+    }
+
+    static Forbidden(message = 'Forbidden') {
+        return new ErrorResponse(message, 403)
     }
 }
 

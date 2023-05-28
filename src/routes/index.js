@@ -4,7 +4,10 @@ const router = new Router()
 const UserRouter = require('./User')
 const AuthRouter = require('./Auth')
 
-router.use('/user', UserRouter)
+const AuthMiddleware = require('../middlewares/AuthMiddleware')
+const CheckRoleMiddleware = require('../middlewares/CheckRoleMiddleware')
+
+router.use('/user', AuthMiddleware, CheckRoleMiddleware('ADMIN'), UserRouter)
 router.use('/auth', AuthRouter)
 
 module.exports = router

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const {ErrorResponse} = require("../exceptions/ErrorResponse");
 
 class TokenService {
     generateTokens(payload) {
@@ -10,6 +11,25 @@ class TokenService {
             refreshToken
         }
     }
+
+    validateAccessToken(token) {
+        try {
+            const user = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+            return user
+        }catch (e) {
+            return null;
+        }
+    }
+
+    validateRefreshToken(token) {
+        try {
+            const user = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+            return user
+        }catch (e) {
+            return null;
+        }
+    }
+
 
 
 }
