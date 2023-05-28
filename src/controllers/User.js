@@ -41,13 +41,31 @@ class UserController {
     }
 
     async logout(req, res, next) {
+        try {
+            const {refreshToken} = req.body
+            const user = await UserService.logout(refreshToken)
 
+            return res.json(user);
+        }catch (e) {
+            next(e)
+        }
     }
 
     async remove(req, res, next) {
         try {
             const user = await UserService.remove(req.params.id)
             return res.json(user)
+        }catch (e) {
+            next(e)
+        }
+    }
+
+    async refresh(req, res, next) {
+        try {
+            const {refreshToken} = req.body
+            const user = await UserService.refresh(refreshToken)
+
+            return res.json(user);
         }catch (e) {
             next(e)
         }

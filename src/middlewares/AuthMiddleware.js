@@ -14,7 +14,6 @@ module.exports = (req, res, next) => {
 
         next()
     }catch (e) {
-        console.log(e + '')
         return res.json(ErrorResponse.Unauthorized())
     }
 }

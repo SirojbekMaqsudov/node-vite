@@ -38,6 +38,7 @@ class UserService {
         const userData = new UserDTO(user)
         const tokens = TokenService.generateTokens(userData)
 
+        await TokenService.saveToken(userData.id, tokens.refreshToken)
         return {...tokens, user: userData}
     }
 
@@ -55,6 +56,7 @@ class UserService {
         const userData = new UserDTO(user)
         const tokens = TokenService.generateTokens(userData)
 
+        await TokenService.saveToken(user.id, tokens.refreshToken)
         return {...tokens, user: userData}
     }
 
@@ -66,6 +68,30 @@ class UserService {
 
         const result = await User.deleteOne({id})
         return result
+    }
+
+    async refresh(refreshToken) {
+        if (!refreshToken) {
+            throw ErrorResponse.Unauthorized()
+        }
+
+        const userData = TokenService.validateRefreshToken(refreshToken)
+        const tokenDB = TokenService.findToken(refreshToken)
+
+        if (!userData && !tokenDB) {
+            throw ErrorResponse.Unauthorized()
+        }
+
+        const user = await User.findOne({id: userData.id})
+        const userDTO = new UserDTO(user)
+
+        const tokens = TokenService.generateTokens(userDTO)
+        return {...tokens, user: userDTO}
+    }
+
+    async logout(refreshToken) {
+        const token = await TokenService.removeToken(refreshToken)
+        return token
     }
 }
 
