@@ -60,6 +60,23 @@ class UserService {
         return {...tokens, user: userData}
     }
 
+    async update(id, data) {
+        const user = await User.findOne({id})
+        if (!user) {
+            throw ErrorResponse.NotFound('User Not Found!')
+        }
+
+        const {error} = UserValidate('update')(data)
+        if (error) throw ErrorResponse.Validation(error.details[0].message)
+
+        if (data.password) {
+            data.password = await bcrypt.hash(data.password, 10)
+        }
+
+        const update = await User.updateOne({id}, {$set: data})
+        return {success: update.modifiedCount === 1}
+    }
+
     async remove(id) {
         const user = await User.findOne({id})
         if (!user) {

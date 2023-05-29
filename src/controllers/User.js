@@ -1,5 +1,5 @@
 const {UserService} = require("../services/user-service");
-const {User} = require("../models/User");
+const {ErrorResponse} = require("../exceptions/ErrorResponse");
 
 class UserController {
     async getAll(req, res, next) {
@@ -37,7 +37,17 @@ class UserController {
     }
 
     async update(req, res, next) {
+        try {
+            const {id} = req.params
+            if (req.user.id !== id) {
+                return next(ErrorResponse.BadRequest('Wrong data!'))
+            }
 
+            const result = await UserService.update(id, req.body)
+            return res.json(result)
+        }catch (e) {
+            next(e)
+        }
     }
 
     async logout(req, res, next) {
@@ -53,6 +63,11 @@ class UserController {
 
     async remove(req, res, next) {
         try {
+            const {id} = req.params
+            if (req.user.id !== id) {
+                return next(ErrorResponse.BadRequest('Wrong data!'))
+            }
+
             const user = await UserService.remove(req.params.id)
             return res.json(user)
         }catch (e) {
